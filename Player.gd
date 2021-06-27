@@ -67,9 +67,12 @@ func interact():
 			TextOut.text += "Do you want to go?\n"
 			get_node("../../../../../ActionMenu/Actions/Q").text = "Yes"
 			get_node("../../../../../ActionMenu/Actions/W").text = "No"
+#			get_tree().paused = true
 			if Input.is_action_pressed("ui_q") or get_node("../../../../../ActionMenu/Actions/Q").pressed:
+#				get_tree().paused = false
 				ChangeLocation()
 #			elif Input.is_action_pressed("ui_w") or get_node("../../../../../ActionMenu/Actions/W").pressed:
+#				get_tree().paused = false
 			get_node("../../../../../ActionMenu/Actions/Q").text = "Q"
 			get_node("../../../../../ActionMenu/Actions/W").text = "W"
 	else:
@@ -126,8 +129,9 @@ func _on_Z_button_down():
 	get_node("../../../../PartyMenu/Character1/ScrollContainer/Status").add_icon_item(load("res://Status_atlastexture.tres"))
 
 func ChangeLocation():
-	pass
-#	position =
-#	look_on_grid =
-#	get_node("../World").
-#	load("res://World2.tscn")
+	var Exit = get_node("../World").get_node("Exit")
+	position = Exit.DestinationPosition + position - Exit.position
+	look_on_grid = Exit.Desinationlook_on_grid
+	get_node("../World").queue_delete()
+	var scene = preload("res://World2.tscn").instance()
+	get_node("..").add_child(scene)
