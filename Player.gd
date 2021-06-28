@@ -14,6 +14,19 @@ var MaxST
 var ERO
 var MaxERO
 
+var AllButtonNames = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z", "X", "C", "V"]
+signal _on_Q_button_down
+signal _on_W_button_down
+signal _on_E_button_down
+signal _on_R_button_down
+signal _on_A_button_down
+signal _on_S_button_down
+signal _on_D_button_down
+signal _on_F_button_down
+signal _on_Z_button_down
+signal _on_X_button_down
+signal _on_C_button_down
+signal _on_V_button_down
 
 func _ready():
 	position = position.snapped(Vector2.ONE * grid_size)
@@ -32,24 +45,15 @@ func _ready():
 	UpdateParameter(0, ST, "ST")
 	UpdateParameter(0, ERO, "ERO")
 	get_node("../Camera2D").position = position
+	for ButtonName in AllButtonNames:
+		self.connect("_on_%s_button_down" % ButtonName, self, "_on_%s_button_down" % ButtonName)
 
 func _unhandled_input(event):
 	if event.is_pressed():
-		if Input.is_action_pressed("ui_f"):
-			interact()
-		elif Input.is_action_pressed("ui_r"):
-			examine()
-		elif Input.is_action_pressed("ui_q"):
-			UpdateParameter(-10, HP, "HP")
-		elif Input.is_action_pressed("ui_e"):
-			UpdateParameter(10, HP, "HP")
-		elif Input.is_action_pressed("ui_d") || Input.is_action_pressed("ui_a") || Input.is_action_pressed("ui_s") || Input.is_action_pressed("ui_w"):
-			look_on_grid.x = Input.get_action_strength("ui_d") - Input.get_action_strength("ui_a")
-			if look_on_grid.x == 0: 
-				look_on_grid.y = Input.get_action_strength("ui_s") - Input.get_action_strength("ui_w")
-			else:
-				look_on_grid.y = 0
-			move(look_on_grid)
+		for ButtonName in AllButtonNames:
+			if Input.is_action_pressed("ui_%s" % ButtonName):
+				emit_signal("_on_%s_button_down" % ButtonName)
+				get_node("../../../../../ActionMenu/Actions/%s" % ButtonName).pressed = true
 
 func move(look_on_grid):
 	$RayCast2D.cast_to = look_on_grid * grid_size
@@ -57,7 +61,7 @@ func move(look_on_grid):
 	$Sprite.rotation = look_on_grid.angle()
 	if !$RayCast2D.is_colliding():
 		position += look_on_grid * grid_size
-	get_node("../Camera2D").position = position
+		get_node("../Camera2D").position = position
 
 func interact():
 	var Text = $RayCast2D.get_collider()
@@ -69,11 +73,12 @@ func interact():
 			get_node("../../../../../ActionMenu/Actions/W").text = "No"
 			var Names = ["Q", "W"]
 			BlockButtons(Names, true, true)
-			if Input.is_action_pressed("ui_q") or get_node("../../../../../ActionMenu/Actions/Q").pressed:
-				BlockButtons(Names, false, true)
-				ChangeLocation()
-			elif Input.is_action_pressed("ui_w") or get_node("../../../../../ActionMenu/Actions/W").pressed:
-				BlockButtons(Names, false, true)
+			while !(get_node("../../../../../ActionMenu/Actions/Q").pressed or get_node("../../../../../ActionMenu/Actions/W").pressed):
+				if get_node("../../../../../ActionMenu/Actions/Q").pressed:
+					BlockButtons(Names, false, true)
+					ChangeLocation()
+				elif get_node("../../../../../ActionMenu/Actions/W").pressed:
+					BlockButtons(Names, false, true)
 			get_node("../../../../../ActionMenu/Actions/Q").text = "Q"
 			get_node("../../../../../ActionMenu/Actions/W").text = "W"
 	else:
@@ -117,6 +122,18 @@ func _on_Q_button_down():
 func _on_E_button_down():
 	UpdateParameter(10, HP, "HP")
 
+func _on_Z_button_down():
+	get_node("../../../../PartyMenu/Character1/ScrollContainer/Status").add_icon_item(load("res://Status_atlastexture.tres"))
+
+func _on_X_button_down():
+	pass # Replace with function body.
+
+func _on_C_button_down():
+	pass # Replace with function body.
+
+func _on_V_button_down():
+	pass # Replace with function body.
+
 func UpdateParameter(Change, Parameter, ParameterName):
 	var MaxParameter = get("Max%s" % ParameterName)
 	Parameter = max(min(Parameter + Change, MaxParameter*2),0)
@@ -124,10 +141,6 @@ func UpdateParameter(Change, Parameter, ParameterName):
 	get_node("../../../../PartyMenu/%s/Parametrs/%s/ColorRect" % [Name, ParameterName]).rect_size.x = 64*Parameter/MaxParameter
 	get_node("../../../../PartyMenu/%s/Parametrs/%s/ColorRect2" % [Name, ParameterName]).rect_size.x = 64*Parameter/MaxParameter-64
 	get_node("../../../../PartyMenu/%s/Parametrs/%s/Label" % [Name, ParameterName]).text = "%s/%s" % [Parameter, MaxParameter]
-
-
-func _on_Z_button_down():
-	get_node("../../../../PartyMenu/Character1/ScrollContainer/Status").add_icon_item(load("res://Status_atlastexture.tres"))
 
 func ChangeLocation():
 	var Exit = get_node("../World").get_node("Exit")
@@ -139,11 +152,14 @@ func ChangeLocation():
 
 func BlockButtons(Names, Off, Reverse = false):
 	if Reverse:
-		var Names2 = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z", "X", "C", "V"]
+#		var AllButtonNames = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z", "X", "C", "V"]
 		for ButtonName in Names:
-			Names2.erase(ButtonName)
-		for ButtonName in Names2:
+			AllButtonNames.erase(ButtonName)
+		for ButtonName in AllButtonNames:
 			get_node("../../../../../ActionMenu/Actions/%s" % ButtonName ).disabled = Off
 	else:
 		for ButtonName in Names:
 			get_node("../../../../../ActionMenu/Actions/%s" % ButtonName ).disabled = Off
+
+
+

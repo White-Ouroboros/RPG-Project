@@ -1063,3 +1063,6 @@ __meta__ = {
 [connection signal="button_down" from="UI/ActionMenu/Actions/D" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_D_button_down"]
 [connection signal="button_down" from="UI/ActionMenu/Actions/F" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_F_button_down"]
 [connection signal="button_down" from="UI/ActionMenu/Actions/Z" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_Z_button_down"]
+[connection signal="button_down" from="UI/ActionMenu/Actions/X" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_X_button_down"]
+[connection signal="button_down" from="UI/ActionMenu/Actions/C" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_C_button_down"]
+[connection signal="button_down" from="UI/ActionMenu/Actions/V" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_V_button_down"]
