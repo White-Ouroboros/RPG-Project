@@ -67,12 +67,13 @@ func interact():
 			TextOut.text += "Do you want to go?\n"
 			get_node("../../../../../ActionMenu/Actions/Q").text = "Yes"
 			get_node("../../../../../ActionMenu/Actions/W").text = "No"
-#			get_tree().paused = true
+			var Names = ["Q", "W"]
+			BlockButtons(Names, true, true)
 			if Input.is_action_pressed("ui_q") or get_node("../../../../../ActionMenu/Actions/Q").pressed:
-#				get_tree().paused = false
+				BlockButtons(Names, false, true)
 				ChangeLocation()
-#			elif Input.is_action_pressed("ui_w") or get_node("../../../../../ActionMenu/Actions/W").pressed:
-#				get_tree().paused = false
+			elif Input.is_action_pressed("ui_w") or get_node("../../../../../ActionMenu/Actions/W").pressed:
+				BlockButtons(Names, false, true)
 			get_node("../../../../../ActionMenu/Actions/Q").text = "Q"
 			get_node("../../../../../ActionMenu/Actions/W").text = "W"
 	else:
@@ -135,3 +136,14 @@ func ChangeLocation():
 	get_node("../World").queue_delete()
 	var scene = preload("res://World2.tscn").instance()
 	get_node("..").add_child(scene)
+
+func BlockButtons(Names, Off, Reverse = false):
+	if Reverse:
+		var Names2 = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z", "X", "C", "V"]
+		for ButtonName in Names:
+			Names2.erase(ButtonName)
+		for ButtonName in Names2:
+			get_node("../../../../../ActionMenu/Actions/%s" % ButtonName ).disabled = Off
+	else:
+		for ButtonName in Names:
+			get_node("../../../../../ActionMenu/Actions/%s" % ButtonName ).disabled = Off
