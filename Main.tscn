@@ -1054,6 +1054,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[connection signal="UpdateCamera" from="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" to="." method="_on_Player_UpdateCamera"]
 [connection signal="button_down" from="UI/ActionMenu/Actions/Q" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_Q_button_down"]
 [connection signal="button_down" from="UI/ActionMenu/Actions/W" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_W_button_down"]
 [connection signal="button_down" from="UI/ActionMenu/Actions/E" to="UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player" method="_on_E_button_down"]
