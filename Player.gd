@@ -63,8 +63,8 @@ func _unhandled_input(event):
 	if event.is_pressed():
 		for ButtonName in AllButtonNames:
 			if Input.is_action_pressed("ui_%s" % ButtonName) and get_node("../../../../../ActionMenu/Actions/%s" % ButtonName).disabled == false:
-				emit_signal("_on_%s_button_down" % ButtonName)
 				get_node("../../../../../ActionMenu/Actions/%s" % ButtonName).pressed = true
+				emit_signal("_on_%s_button_down" % ButtonName)
 
 func _on_Q_button_down():
 	match MenuState:

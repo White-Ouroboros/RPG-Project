@@ -3,36 +3,46 @@
 [ext_resource path="res://assets/tilesheet_complete.png" type="Texture" id=1]
 [ext_resource path="res://Enemy.gd" type="Script" id=2]
 
-[sub_resource type="SegmentShape2D" id=1]
-a = Vector2( 64, 0 )
-b = Vector2( -64, 0 )
+[sub_resource type="CircleShape2D" id=1]
+radius = 32.0
 
-[sub_resource type="SegmentShape2D" id=2]
-a = Vector2( 0, -64 )
-b = Vector2( 0, 64 )
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 16, 16 )
 
 [node name="Enemy" type="Area2D"]
-position = Vector2( 96, 608 )
-collision_layer = 2
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 1280, 704, 64, 64 )
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
-shape = SubResource( 2 )
-
 [node name="RayCast2D" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 0, 0 )
 collide_with_areas = true
 
-[connection signal="area_entered" from="." to="." method="_on_Enemy_area_entered"]
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 1 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Area2D"]
+enabled = true
+collision_mask = 2
+collide_with_areas = true
+
+[node name="Area2D2" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D2"]
+polygon = PoolVector2Array( -16, -80, 16, -80, 16, -16, 80, -16, 80, 16, 16, 16, 16, 80, -16, 80, -16, 16, -80, 16, -80, -16, -16, -16 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_Area2D_area_entered"]
+[connection signal="area_entered" from="Area2D2" to="." method="_on_Area2D2_area_entered"]
