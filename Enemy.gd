@@ -112,13 +112,20 @@ func Chase():
 	look_on_grid = $RayCast2D.cast_to
 	$RayCast2D.cast_to = look_on_grid * grid_size
 	$RayCast2D.force_raycast_update()
-	if !$RayCast2D.is_colliding():
-		$Sprite.rotation = look_on_grid.angle()
-		position += look_on_grid * grid_size
-	else:
-		pass
-		
-		
+	
+	if $RayCast2D.is_colliding():
+		$RayCast2D.cast_to = PlayerPosition - position
+		$RayCast2D.force_raycast_update()
+		if abs($RayCast2D.cast_to.x) < abs($RayCast2D.cast_to.y):
+			$RayCast2D.cast_to.x = abs($RayCast2D.cast_to.x) / $RayCast2D.cast_to.x
+			$RayCast2D.cast_to.y = 0
+		else:
+			$RayCast2D.cast_to.y = abs($RayCast2D.cast_to.y) / $RayCast2D.cast_to.y
+			$RayCast2D.cast_to.x = 0
+		look_on_grid = $RayCast2D.cast_to
+	
+	$Sprite.rotation = look_on_grid.angle()
+	position += look_on_grid * grid_size
 	if position == PlayerPosition:
 		Behavior = WANDER
 
