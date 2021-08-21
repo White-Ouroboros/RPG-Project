@@ -24,12 +24,13 @@ var MaxERO
 var GhostFrames
 onready var Player = get_node("/root/Main/UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player")
 
-onready var RayCast = $RayCast2D
-#onready var RayCast = $Area2D/RayCast2D
 enum {WANDER, CHASE}
 var Behavior = WANDER
 
+var Look = false
 export var ScaleInt = 5
+
+var PlayerPosition = Vector2(0, 0)
 
 func _ready():
 	$Area2D/CollisionShape2D.scale = Vector2(ScaleInt * 2, ScaleInt *2 )
@@ -43,34 +44,37 @@ func _ready():
 	GhostFrames = 0
 
 func move():
-	if GhostFrames == 0:
-		var random_number = randf()
-		if random_number >= 0.2:
-			if random_number < 0.5:
-				look_on_grid = MoveDirections[randi()%4]
+	var random_number = randf()
+	if random_number >= 0.2:
+		if random_number < 0.5:
+			look_on_grid = MoveDirections[randi()%4]
+		else:
+			look_on_grid = MoveDirection
+		var positionStart = position
+		while positionStart == position:
+			$RayCast2D.cast_to = look_on_grid * grid_size
+			$RayCast2D.force_raycast_update()
+			if !$RayCast2D.is_colliding():
+				$Sprite.rotation = look_on_grid.angle()
+				position += look_on_grid * grid_size
+				MoveDirection = look_on_grid
 			else:
-				look_on_grid = MoveDirection
-			var positionStart = position
-			while positionStart == position:
-				$RayCast2D.cast_to = look_on_grid * grid_size
-				$RayCast2D.force_raycast_update()
-				if !$RayCast2D.is_colliding():
-					$Sprite.rotation = look_on_grid.angle()
-					position += look_on_grid * grid_size
-					MoveDirection = look_on_grid
-				else:
-					look_on_grid = MoveDirections[randi()%4]
+				look_on_grid = MoveDirections[randi()%4]
+
+func _on_UpdateWorld():
+	if Look:
+		LookForPlayer()
+	if GhostFrames == 0:
+		if Behavior == WANDER:
+			move()
+		else:
+			Chase()
 	else:
 		GhostFrames -= 1
 		if GhostFrames == 0:
 			ModulateColor()
-
-func _on_UpdateWorld():
-	if Behavior == WANDER:
+	if Look:
 		LookForPlayer()
-		move()
-	else:
-		Chase()
 
 func _on_Area2D2_area_entered(area):
 	if area.name == "Player":
@@ -78,25 +82,50 @@ func _on_Area2D2_area_entered(area):
 
 func ModulateColor():
 	if GhostFrames == 0:
-		$Sprite.modulate = Color(1, 1, 1, 1)
+		$Sprite.modulate.a = 1
 		$Area2D2/CollisionPolygon2D.disabled = false
 		$CollisionShape2D.disabled = false
 	else:
-		$Sprite.modulate = Color(1, 1, 1, 0.5)
+		$Sprite.modulate.a = 0.5
 		$Area2D2/CollisionPolygon2D.disabled = true
 		$CollisionShape2D.disabled = true
 
-func LookForPlayer(Signal = false):
-	if Signal or $Area2D.get_overlapping_areas().find(Player) > -1:
-		RayCast.cast_to = Player.position
-		if RayCast.is_colliding():
-#			var a = RayCast.get_collider()
-			if RayCast.get_collider() == Player:
-				Behavior = CHASE
+func LookForPlayer():
+	$RayCast2D.cast_to = Player.position - position
+	$RayCast2D.force_raycast_update()
+	if $RayCast2D.get_collider() == Player:
+		Behavior = CHASE
+		PlayerPosition = Player.position
 
 func Chase():
-	pass
+	$RayCast2D.cast_to = PlayerPosition - position
+	$RayCast2D.force_raycast_update()
+	if $RayCast2D.cast_to != Vector2(0, 0):
+		if abs($RayCast2D.cast_to.x) >= abs($RayCast2D.cast_to.y):
+			$RayCast2D.cast_to.x = abs($RayCast2D.cast_to.x) / $RayCast2D.cast_to.x
+			$RayCast2D.cast_to.y = 0
+		else:
+			$RayCast2D.cast_to.y = abs($RayCast2D.cast_to.y) / $RayCast2D.cast_to.y
+			$RayCast2D.cast_to.x = 0
+	else:
+		$RayCast2D.cast_to = Vector2(0, 0)
+	look_on_grid = $RayCast2D.cast_to
+	$RayCast2D.cast_to = look_on_grid * grid_size
+	$RayCast2D.force_raycast_update()
+	if !$RayCast2D.is_colliding():
+		$Sprite.rotation = look_on_grid.angle()
+		position += look_on_grid * grid_size
+	else:
+		pass
+		
+		
+	if position == PlayerPosition:
+		Behavior = WANDER
 
 func _on_Area2D_area_entered(area):
 	if area == Player:
-		LookForPlayer(true)
+		Look = true
+
+func _on_Area2D_area_exited(area):
+	if area == Player:
+		Look = false

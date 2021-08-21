@@ -20,6 +20,6 @@ func _on_Player_UpdateCamera(scene):
 	set_camera_limits(scene)
 
 func _on_Player_UpdateWorld():
-	$UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player.pause_mode = true
+#	$UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player.pause_mode = true
 	emit_signal("UpdateWorld")
-	$UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player.pause_mode = false
+#	$UI/HBoxContainer/Viewport/ViewportContainer/Viewport/Player.pause_mode = false

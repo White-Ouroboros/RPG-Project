@@ -13,11 +13,20 @@ extents = Vector2( 16, 16 )
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
+z_index = 1
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 1280, 704, 64, 64 )
+
+[node name="Sprite" type="Sprite" parent="Sprite"]
+position = Vector2( 16, 0 )
+z_index = -1
 texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 1280, 704, 64, 64 )
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
+modulate = Color( 1, 0.937255, 0, 1 )
 enabled = true
 cast_to = Vector2( 0, 0 )
 collide_with_areas = true
@@ -28,11 +37,6 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource( 1 )
-
-[node name="RayCast2D" type="RayCast2D" parent="Area2D"]
-enabled = true
-collision_mask = 2
-collide_with_areas = true
 
 [node name="Area2D2" type="Area2D" parent="."]
 collision_layer = 0
@@ -45,4 +49,5 @@ polygon = PoolVector2Array( -16, -80, 16, -80, 16, -16, 80, -16, 80, 16, 16, 16,
 shape = SubResource( 2 )
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_Area2D_area_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_Area2D_area_exited"]
 [connection signal="area_entered" from="Area2D2" to="." method="_on_Area2D2_area_entered"]
